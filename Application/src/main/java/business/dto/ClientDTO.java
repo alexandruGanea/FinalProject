@@ -21,6 +21,7 @@ ClientDTO {
     @NotEmpty
     @NotBlank
     private String address;
+    @NotNull
     @Pattern(regexp = ("([0-9]{10})"))
     private String phoneNo;
     @NotNull

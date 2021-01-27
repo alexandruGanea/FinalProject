@@ -72,5 +72,17 @@ public class FlightService {
         Integer idFound = flightDAO.findFlightIdByName(session, flightDTO.getName());
         return idFound != 0;
     }
+
+    FlightDTO setFlightDTO(Flight flight) {
+        FlightDTO flightDTO = new FlightDTO();
+        flightDTO.setName(flight.getName());
+        flightDTO.setDepartureAirportDTO(airportService.setAirportDTO(flight.getDepartureAirport()));
+        flightDTO.setDestinationAirportDTO(airportService.setAirportDTO(flight.getDestinationAirport()));
+        flightDTO.setDepartureDate(flight.getDeparture());
+        flightDTO.setArrivalDate(flight.getArrival());
+        flightDTO.setAvailableSeats(flight.getAvailableSeats());
+        flightDTO.setSeatPrice(flight.getSeatPrice());
+        return flightDTO;
+    }
 }
 

@@ -52,4 +52,11 @@ public class CityService {
         Integer idFound = cityDAO.findCityIdByName(session, cityDTO.getName());
         return idFound != 0;
     }
+
+    CityDTO setCityDTO(City city) {
+        CityDTO cityDTO = new CityDTO();
+        cityDTO.setName(city.getName());
+        cityDTO.setCountryDTO(countryService.setCountryDTO(city.getCountry()));
+        return cityDTO;
+    }
 }

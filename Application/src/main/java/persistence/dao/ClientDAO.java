@@ -73,9 +73,9 @@ public class ClientDAO {
         Query selectClientByEmail = session.createNamedQuery("selectClientByEmail");
         selectClientByEmail.setParameter("email", email);
         Client foundClient = null;
-        try{
+        try {
             foundClient = (Client) (selectClientByEmail.getSingleResult());
-        }catch(NoResultException e){
+        } catch (NoResultException e) {
             System.out.println(e.getMessage());
         }
         session.getTransaction().commit();
@@ -88,42 +88,77 @@ public class ClientDAO {
         Query selectClientByEmail = session.createNamedQuery("selectClientByEmail");
         selectClientByEmail.setParameter("email", email);
         Client foundClient = null;
-        try{
+        try {
             foundClient = (Client) (selectClientByEmail.getSingleResult());
-        }catch(NoResultException e){
-            System.out.println(e.getMessage());;
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            ;
         }
         session.getTransaction().commit();
         return foundClient;
     }
 
-    public Integer findClientIdByAccountId(int id){
+    public Integer findClientIdByAccountId(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         Query selectClientIdByAccountId = session.createNamedQuery("selectClientIdByAccountId");
         selectClientIdByAccountId.setParameter("id", id);
         Integer foundId = 0;
-        try{
-            foundId = (Integer)selectClientIdByAccountId.getSingleResult();
-        }catch (NoResultException e){
-            System.out.println(e.getMessage());;
+        try {
+            foundId = (Integer) selectClientIdByAccountId.getSingleResult();
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            ;
         }
         session.getTransaction().commit();
         session.close();
         return foundId;
     }
 
-    public Integer findClientIdByAccountId(Session session, int id){
+    public Integer findClientIdByAccountId(Session session, int id) {
         session.beginTransaction();
         Query selectClientIdByAccountId = session.createNamedQuery("selectClientIdByAccountId");
         selectClientIdByAccountId.setParameter("id", id);
         Integer foundId = 0;
-        try{
-            foundId = (Integer)selectClientIdByAccountId.getSingleResult();
-        }catch (NoResultException e){
-            System.out.println(e.getMessage());;
+        try {
+            foundId = (Integer) selectClientIdByAccountId.getSingleResult();
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            ;
         }
         session.getTransaction().commit();
         return foundId;
+    }
+
+    public Client findClientByAccountNameAndPassword(String accountName, String accountPassword) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        Query selectClientByAccountNameAndPassword = session.createNamedQuery("selectClientByAccountNameAndPassword");
+        selectClientByAccountNameAndPassword.setParameter("accountName", accountName);
+        selectClientByAccountNameAndPassword.setParameter("accountPassword", accountPassword);
+        Client foundClient = null;
+        try {
+            foundClient = (Client) (selectClientByAccountNameAndPassword.getSingleResult());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        session.getTransaction().commit();
+        session.close();
+        return foundClient;
+    }
+
+    public Client findClientByAccountNameAndPassword(Session session, String accountName, String accountPassword) {
+        session.beginTransaction();
+        Query selectClientByAccountNameAndPassword = session.createNamedQuery("selectClientByAccountNameAndPassword");
+        selectClientByAccountNameAndPassword.setParameter("accountName", accountName);
+        selectClientByAccountNameAndPassword.setParameter("accountPassword", accountPassword);
+        Client foundClient = null;
+        try {
+            foundClient = (Client) (selectClientByAccountNameAndPassword.getSingleResult());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        session.getTransaction().commit();
+        return foundClient;
     }
 }

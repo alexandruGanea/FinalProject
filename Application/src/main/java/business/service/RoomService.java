@@ -1,6 +1,7 @@
 package business.service;
 
 import business.dto.RoomDTO;
+import business.dto.TravelPackageDTO;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,9 @@ import persistence.dao.HotelDAO;
 import persistence.dao.RoomDAO;
 import persistence.entities.Hotel;
 import persistence.entities.Room;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class RoomService {
@@ -62,4 +66,18 @@ public class RoomService {
         Integer idFound = roomDAO.findRoomIdByTypeAndHotelId(session, roomDTO.getRoomType(), hotelId);
         return idFound != 0;
     }
+
+    void updateStock(Session session, RoomDTO roomDTO, int soldItems){
+
+    }
+
+    private RoomDTO setRoomDTO(Room room) {
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setRoomType(room.getRoomType());
+        roomDTO.setAvailableRooms(room.getAvailableRooms());
+        roomDTO.setGuestPrice(room.getGuestPrice());
+        roomDTO.setMaxGuests(room.getMaxGuests());
+        return roomDTO;
+    }
+
 }

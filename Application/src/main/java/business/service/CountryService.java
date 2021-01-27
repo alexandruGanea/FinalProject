@@ -52,6 +52,13 @@ public class CountryService {
         Integer idFound = countryDAO.findCountryIdByName(session, countryDTO.getName());
         return idFound != 0;
     }
+
+    CountryDTO setCountryDTO(Country country) {
+        CountryDTO countryDTO = new CountryDTO();
+        countryDTO.setName(country.getName());
+        countryDTO.setContinentDTO(continentService.setContinentDTO(country.getContinent()));
+        return countryDTO;
+    }
 }
 
 

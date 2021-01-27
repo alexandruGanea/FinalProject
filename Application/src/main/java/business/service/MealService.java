@@ -43,7 +43,7 @@ public class MealService {
         }
     }
 
-    private boolean isInserted(Session session, MealDTO mealDTO) {
+    public boolean isInserted(Session session, MealDTO mealDTO) {
         Integer hotelId = hotelDAO.findHotelIdByNameAndCity(session, mealDTO.getHotelDTO().getName(), mealDTO.getHotelDTO().getCityDTO().getName());
         Integer foundId = mealDAO.findMealIdByHotelId(session, hotelId);
         return foundId != 0;
@@ -53,5 +53,15 @@ public class MealService {
         Integer hotelId = hotelDAO.findHotelIdByNameAndCity(mealDTO.getHotelDTO().getName(), mealDTO.getHotelDTO().getCityDTO().getName());
         Integer foundId = mealDAO.findMealIdByHotelId(hotelId);
         return foundId != 0;
+    }
+
+    MealDTO setMealDTO(Meal meal){
+        MealDTO mealDTO = new MealDTO();
+        mealDTO.setHotelDTO(hotelService.setHotelDTO(meal.getHotelWithMeals()));
+        mealDTO.setPriceBB(meal.getPriceBB());
+        mealDTO.setPriceHB(meal.getPriceHB());
+        mealDTO.setPriceFB(meal.getPriceFB());
+        mealDTO.setPriceAI(meal.getPriceAI());
+        return mealDTO;
     }
 }

@@ -8,12 +8,14 @@ import javax.persistence.*;
         @NamedQuery(name = "changeAccountPassword", query = "UPDATE Account account SET account.accountPassword = :newPassword " +
                 "WHERE account.accountName = accountName"),
         @NamedQuery(name = "updateUserLogin", query = "UPDATE Account account SET account.isUserLogin = :isUserLogin " +
-                "WHERE account.accountName = :accountName"),
+                "WHERE account.accountName = :accountName AND account.accountPassword = :accountPassword"),
         @NamedQuery(name = "updateAdminLogin", query = "UPDATE Account account SET account.isAdminLogin = :isAdminLogin " +
-                "WHERE accountName = :accountName"),
+                "WHERE accountName = :accountName AND account.accountPassword = :accountPassword"),
         @NamedQuery(name = "selectAccountByNameAndPassword", query = "SELECT account from Account account " +
                 "WHERE account.accountName = :accountName AND account.accountPassword = :accountPassword"),
         @NamedQuery(name = "selectAccountIdByNameAndPassword", query = "SELECT account.id FROM Account account " +
+                "WHERE account.accountName = :accountName AND account.accountPassword = :accountPassword"),
+        @NamedQuery(name = "selectLoginByNameAndPassword", query = "SELECT account.isUserLogin FROM Account account " +
                 "WHERE account.accountName = :accountName AND account.accountPassword = :accountPassword")
 })
 
@@ -33,7 +35,7 @@ public class Account {
     private boolean isAdminLogin;
     @Column(name = "is_user_login")
     private boolean isUserLogin;
-    @OneToOne(mappedBy = "clientAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "clientAccount", cascade = CascadeType.ALL)
     private Client client;
 
     public Account() {

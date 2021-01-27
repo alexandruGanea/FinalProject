@@ -48,11 +48,12 @@ public class AccountDAO {
         session.close();
     }
 
-    public void updateUserLogin(String accountName, boolean isUserLogin) {
+    public void updateUserLogin(String accountName, String accountPassword, boolean isUserLogin) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         Query updateUserLogin = session.createNamedQuery("updateUserLogin");
         updateUserLogin.setParameter("accountName", accountName);
+        updateUserLogin.setParameter("accountPassword", accountPassword);
         updateUserLogin.setParameter("isUserLogin", isUserLogin);
         int rowsAffected = updateUserLogin.executeUpdate();
         System.out.println("Rows affected: " + rowsAffected);
@@ -60,12 +61,13 @@ public class AccountDAO {
         session.close();
     }
 
-    public void updateAdminLogin(String accountName, boolean isUserLogin) {
+    public void updateAdminLogin(String accountName, String accountPassword, boolean isAdminLogin) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         Query updateAdminLogin = session.createNamedQuery("updateAdminLogin");
         updateAdminLogin.setParameter("accountName", accountName);
-        updateAdminLogin.setParameter("isAdminLogin", isUserLogin);
+        updateAdminLogin.setParameter("accountPassword", accountPassword);
+        updateAdminLogin.setParameter("isAdminLogin", isAdminLogin);
         int rowsAffected = updateAdminLogin.executeUpdate();
         System.out.println("Rows affected: " + rowsAffected);
         session.getTransaction().commit();
@@ -82,6 +84,23 @@ public class AccountDAO {
         session.getTransaction().commit();
         session.close();
         return account;
+    }
+
+    public boolean isLoggedIn(String accountName, String accountPassword) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        Query selectLoginByNameAndPassword = session.createNamedQuery("selectLoginByNameAndPassword");
+        selectLoginByNameAndPassword.setParameter("accountName", accountName);
+        selectLoginByNameAndPassword.setParameter("accountPassword", accountPassword);
+        boolean isLoggedIn = false;
+        try {
+            isLoggedIn = (boolean) (selectLoginByNameAndPassword.getSingleResult());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        session.getTransaction().commit();
+        session.close();
+        return isLoggedIn;
     }
 
     public Account findAccountByNameAndPassword(Session session, String accountName, String accountPassword) {

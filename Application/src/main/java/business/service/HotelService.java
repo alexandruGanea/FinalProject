@@ -19,6 +19,10 @@ public class HotelService {
     CityDAO cityDAO;
     @Autowired
     CityService cityService;
+    @Autowired
+    MealService mealService;
+    @Autowired
+    RoomService roomService;
 
     public void insertHotel(HotelDTO hotelDTO) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -57,4 +61,12 @@ public class HotelService {
         return idFound != 0;
     }
 
+    HotelDTO setHotelDTO(Hotel hotel) {
+        HotelDTO hotelDTO = new HotelDTO();
+        hotelDTO.setName(hotel.getHotelName());
+        hotelDTO.setDescription(hotel.getDescription());
+        hotelDTO.setRating(hotel.getHotelRating());
+        hotelDTO.setCityDTO(cityService.setCityDTO(hotel.getCityContainingHotel()));
+        return hotelDTO;
+    }
 }

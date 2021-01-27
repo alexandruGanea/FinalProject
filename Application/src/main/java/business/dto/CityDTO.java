@@ -14,6 +14,9 @@ public class CityDTO {
     private CountryDTO countryDTO;
 
 
+    public CityDTO() {
+    }
+
     public CityDTO(@NotNull @NotBlank(message = "Campul este gol") @NotEmpty @Pattern(regexp = "([a-z A-Z])*") String name) {
         this.name = name;
     }

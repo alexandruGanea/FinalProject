@@ -29,6 +29,13 @@ import java.util.Set;
                 query = "SELECT client.id FROM Client client " +
                         "JOIN client.clientAccount account " +
                         "WHERE account.id = :id"
+        ),
+        @NamedQuery(
+                name = "selectClientByAccountNameAndPassword",
+                query = "SELECT client FROM Client client " +
+                        "JOIN client.clientAccount account " +
+                        "WHERE account.accountName = :accountName " +
+                        "AND account.accountPassword = :accountPassword"
         )
 })
 
@@ -49,15 +56,11 @@ public class Client {
     private String phone;
     @Column(name = "email")
     private String email;
-    //M2M with Purchase Entity, Client initiates CRUD
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "clients_purchases",
-            joinColumns = {@JoinColumn(name = "client_id")},
-            inverseJoinColumns = {@JoinColumn(name = "purchase_id")})
-    private Set<Purchase> purchasesByClient;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
     private Account clientAccount;
+    @OneToMany(mappedBy = "clientWithPurchases", cascade = CascadeType.ALL)
+    private Set<Purchase> purchasesByClient;
 
     public Client() {
     }
@@ -142,6 +145,8 @@ public class Client {
     public void setClientAccount(Account clientAccount) {
         this.clientAccount = clientAccount;
     }
+
+
 
     @Override
     public String toString() {

@@ -65,6 +65,20 @@ public class HotelDAO {
         return foundHotel;
     }
 
+    public Hotel findHotelById(Session session, int hotelId) {
+        session.beginTransaction();
+        Query selectHotelById = session.createNamedQuery("selectHotelById");
+        selectHotelById.setParameter("hotelId", hotelId);
+        Hotel foundHotel = null;
+        try {
+            foundHotel = (Hotel) selectHotelById.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        session.getTransaction().commit();
+        return foundHotel;
+    }
+
     public Hotel findHotelByNameAndCity(Session session, String hotelName, String cityName) {
         session.beginTransaction();
         Query selectHotelByNameAndCity = session.createNamedQuery("selectHotelByNameAndCity");

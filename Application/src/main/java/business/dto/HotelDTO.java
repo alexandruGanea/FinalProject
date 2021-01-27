@@ -1,6 +1,7 @@
 package business.dto;
 
 import javax.validation.constraints.*;
+import java.util.Set;
 
 public class HotelDTO {
 
@@ -15,10 +16,16 @@ public class HotelDTO {
     @NotNull
     private String description;
     private CityDTO cityDTO;
+    private MealDTO MealDTO;
+    private Set<RoomDTO> roomDTOSet;
+
+
+
+    public HotelDTO() {
+    }
 
     public HotelDTO(String name) {
         this.name = name;
-
     }
 
     public HotelDTO(String name, CityDTO cityDTO) {
@@ -56,6 +63,22 @@ public class HotelDTO {
 
     public void setCityDTO(CityDTO cityDTO) {
         this.cityDTO = cityDTO;
+    }
+
+    public business.dto.MealDTO getMealDTO() {
+        return MealDTO;
+    }
+
+    public void setMealDTO(business.dto.MealDTO mealDTO) {
+        MealDTO = mealDTO;
+    }
+
+    public Set<RoomDTO> getRoomDTOSet() {
+        return roomDTOSet;
+    }
+
+    public void setRoomDTOSet(Set<RoomDTO> roomDTOSet) {
+        this.roomDTOSet = roomDTOSet;
     }
 
     @Override

@@ -38,6 +38,14 @@ import javax.persistence.*;
                         "JOIN room.hotelContainingRoom hotel " +
                         "where room.roomType = :roomType " +
                         "AND hotel.id = :id"
+        ),
+        @NamedQuery(
+                name = "selectRoomByTravelPackageName",
+                query = "SELECT room from Room room " +
+                        "JOIN room.hotelContainingRoom hotelWithRoom " +
+                        "JOIN hotelWithRoom.hotel hotelInTravelPackage " +
+                        "WHERE hotelInTravelPackage.name = :name " +
+                        "AND room.maxGuests = :maxGuests"
         )
 })
 

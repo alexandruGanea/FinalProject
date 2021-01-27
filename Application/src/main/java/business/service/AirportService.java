@@ -48,6 +48,13 @@ public class AirportService {
     }
 
     public boolean isInserted(Session session, AirportDTO airportDTO) {
-        return airportDAO.findAirportIdByName(session,airportDTO.getName()) != 0;
+        return airportDAO.findAirportIdByName(session, airportDTO.getName()) != 0;
+    }
+
+    AirportDTO setAirportDTO(Airport airport) {
+        AirportDTO airportDTO = new AirportDTO();
+        airportDTO.setName(airport.getName());
+        airportDTO.setCityDTO(cityService.setCityDTO(airport.getCityContainingAirport()));
+        return airportDTO;
     }
 }

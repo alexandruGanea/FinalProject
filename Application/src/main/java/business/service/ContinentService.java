@@ -35,4 +35,10 @@ public class ContinentService {
         Integer foundId = continentDAO.findContinentIdByName(session, continentDTO.getName());
         return foundId != 0;
     }
+
+    public ContinentDTO setContinentDTO(Continent continent) {
+        ContinentDTO continentDTO = new ContinentDTO();
+        continentDTO.setName(continent.getName());
+        return continentDTO;
+    }
 }

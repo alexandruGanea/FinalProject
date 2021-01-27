@@ -13,6 +13,8 @@ public class AirportDTO {
     private String name;
     private CityDTO cityDTO;
 
+    public AirportDTO() {
+    }
 
     public AirportDTO(@NotNull @NotBlank(message = "Campul este gol") @NotEmpty @Pattern(regexp = "([a-z A-Z])*") String name) {
         this.name = name;

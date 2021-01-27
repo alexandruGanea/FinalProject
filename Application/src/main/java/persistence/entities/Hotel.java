@@ -71,7 +71,14 @@ import java.util.Set;
                         "JOIN hotel.cityContainingHotel city " +
                         "WHERE hotel.hotelName = :hotelName " +
                         "AND city.name = :cityName"
+        ),
+        @NamedQuery(
+                name = "selectHotelById",
+                query = "SELECT hotel " +
+                        "FROM Hotel hotel " +
+                        "WHERE hotel.id = :hotelId"
         )
+
 })
 
 public class Hotel {

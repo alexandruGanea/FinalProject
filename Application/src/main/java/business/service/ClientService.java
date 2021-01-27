@@ -34,7 +34,7 @@ public class ClientService {
         session.close();
     }
 
-    public void insertClient(Session session, ClientDTO clientDTO){
+    public Client insertClient(Session session, ClientDTO clientDTO){
         Client client = new Client();
         client.setFirstName(clientDTO.getFirstName());
         client.setLastName(clientDTO.getLastName());
@@ -44,24 +44,32 @@ public class ClientService {
         client.setEmail(clientDTO.getEmail());
         client.setClientAccount(checkForAccount(session, clientDTO));
         clientDAO.insertClient(session, client);
+        return client;
     }
 
     private Account checkForAccount(Session session, ClientDTO clientDTO){
         if (accountService.isInserted(session, clientDTO.getAccountDTO())){
-            return accountDAO.findAccountByNameAndPassword(session, clientDTO.getAccountDTO().getAccountName(), clientDTO.getAccountDTO().getAccountPassword());
+            String encryptedPassword = accountService.encryptPassword(clientDTO.getAccountDTO().getAccountPassword());
+            return accountDAO.findAccountByNameAndPassword(session, clientDTO.getAccountDTO().getAccountName(), encryptedPassword);
         }else{
             return accountService.insertAccount(session, clientDTO.getAccountDTO());
         }
     }
 
+    public boolean isLoggedIn(ClientDTO clientDTO){
+        return accountService.isLoggedIn(clientDTO.getAccountDTO());
+    }
+
     public boolean isInserted(ClientDTO clientDTO){
-        Integer accountId = accountDAO.findAccountIdByNameAndPassword(clientDTO.getAccountDTO().getAccountName(), clientDTO.getAccountDTO().getAccountPassword());
+        String encryptedPassword = accountService.encryptPassword(clientDTO.getAccountDTO().getAccountPassword());
+        Integer accountId = accountDAO.findAccountIdByNameAndPassword(clientDTO.getAccountDTO().getAccountName(), encryptedPassword);
         Integer idFound = clientDAO.findClientIdByAccountId(accountId);
         return idFound!=0;
     }
 
     public boolean isInserted(Session session, ClientDTO clientDTO){
-        Integer accountId = accountDAO.findAccountIdByNameAndPassword(session, clientDTO.getAccountDTO().getAccountName(), clientDTO.getAccountDTO().getAccountPassword());
+        String encryptedPassword = accountService.encryptPassword(clientDTO.getAccountDTO().getAccountPassword());
+        Integer accountId = accountDAO.findAccountIdByNameAndPassword(session, clientDTO.getAccountDTO().getAccountName(), encryptedPassword);
         Integer idFound = clientDAO.findClientIdByAccountId(session, accountId);
         return idFound!=0;
     }

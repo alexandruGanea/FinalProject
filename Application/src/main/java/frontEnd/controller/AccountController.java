@@ -5,10 +5,7 @@ import business.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -29,4 +26,24 @@ public class AccountController {
         }
     }
 
+    @PutMapping(path = "/loginAccount")
+    public ResponseEntity loginAccount(@Valid @RequestBody AccountDTO accountDTO) {
+        if (!accountService.isInserted(accountDTO)) {
+            insertAccount(accountDTO);
+            return loginAccount(accountDTO);
+        } else if(accountService.isLoggedIn(accountDTO)) {
+           return ResponseEntity.status(HttpStatus.CONFLICT).body("You are already logged in on another device. Please log out there first");
+        }else{
+            accountService.accountLogin(accountDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("You have successfully logged in.");
+        }
+    }
+
+    @PutMapping(path = "/logoutAccount")
+    public ResponseEntity logoutAccount(@Valid @RequestBody AccountDTO accountDTO){
+        if(accountService.isLoggedIn(accountDTO)){
+            accountService.accountLogout(accountDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("You have successfully logged out.");
+        }else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: the account does not exist.");
+    }
 }

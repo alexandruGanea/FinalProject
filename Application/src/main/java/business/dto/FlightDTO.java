@@ -13,16 +13,19 @@ public class FlightDTO {
     private AirportDTO destinationAirportDTO;
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private String departureDate;
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private String arrivalDate;
     @NotNull
     private int availableSeats;
     @NotNull
     private double seatPrice;
+
+    public FlightDTO() {
+    }
 
     public FlightDTO(String name, AirportDTO departureAirportDTO, String departureDate, AirportDTO destinationAirportDTO, String arrivalDate) {
         this.name = name;

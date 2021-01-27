@@ -6,21 +6,40 @@ import java.util.Set;
 @Entity
 @Table(name = "travel_packages")
 
+@NamedQueries({
+        @NamedQuery(
+                name = "selectTravelPackageIdByName",
+                query = "SELECT travelPackage.id FROM TravelPackage travelPackage " +
+                        "WHERE travelPackage.name = :name"
+        ),
+
+        @NamedQuery(
+                name = "selectTravelPackageByName",
+                query = "SELECT travelPackage from TravelPackage travelPackage " +
+                        "WHERE travelPackage.name = :name"
+        ),
+
+        @NamedQuery(
+                name = "updateTravelPackageStockByName",
+                query = "UPDATE TravelPackage travelPackage " +
+                        "SET travelPackage.availablePackages = travelPackage.availablePackages - :soldItems " +
+                        "WHERE travelPackage.name = :name"
+        )
+})
+
 public class TravelPackage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private String name;
+    private String description;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "departure_id")
-    private Airport departureAirport;
+    @JoinColumn(name = "inbound_flight_id")
+    private Flight inboundFlight;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "destination_id")
-    private Airport destinationAirport;
-    @Column(name = "departure_date")
-    private String departureDate;
-    @Column(name = "return_date")
-    private String returnDate;
+    @JoinColumn(name = "outbound_flight_id")
+    private Flight outboundFlight;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
@@ -40,11 +59,15 @@ public class TravelPackage {
     public TravelPackage() {
     }
 
-    public TravelPackage(String departureDate, String returnDate, Airport departureAirport, Airport destinationAirport, Hotel hotel, String packageType, boolean isPromoted) {
-        this.departureDate = departureDate;
-        this.returnDate = returnDate;
-        this.departureAirport = departureAirport;
-        this.destinationAirport = destinationAirport;
+
+    public TravelPackage(String name) {
+        this.name = name;
+    }
+
+    public TravelPackage(String name, Flight inboundFlight, Flight outboundFlight, Hotel hotel, String packageType, boolean isPromoted) {
+        this.name = name;
+        this.inboundFlight = inboundFlight;
+        this.outboundFlight = outboundFlight;
         this.hotel = hotel;
         this.packageType = packageType;
         this.isPromoted = isPromoted;
@@ -56,38 +79,6 @@ public class TravelPackage {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Airport getDepartureAirport() {
-        return departureAirport;
-    }
-
-    public void setDepartureAirport(Airport departureAirport) {
-        this.departureAirport = departureAirport;
-    }
-
-    public Airport getDestinationAirport() {
-        return destinationAirport;
-    }
-
-    public void setDestinationAirport(Airport destinationAirport) {
-        this.destinationAirport = destinationAirport;
-    }
-
-    public String getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(String departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public String getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(String returnDate) {
-        this.returnDate = returnDate;
     }
 
     public Hotel getHotel() {
@@ -144,5 +135,37 @@ public class TravelPackage {
 
     public void setPurchasesOfPackage(Set<Purchase> purchasesOfPackage) {
         this.purchasesOfPackage = purchasesOfPackage;
+    }
+
+    public Flight getInboundFlight() {
+        return inboundFlight;
+    }
+
+    public void setInboundFlight(Flight inboundFlight) {
+        this.inboundFlight = inboundFlight;
+    }
+
+    public Flight getOutboundFlight() {
+        return outboundFlight;
+    }
+
+    public void setOutboundFlight(Flight outboundFlight) {
+        this.outboundFlight = outboundFlight;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

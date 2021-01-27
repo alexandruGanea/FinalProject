@@ -23,7 +23,7 @@ import javax.persistence.*;
                 query = "SELECT flight.id " +
                         "FROM Flight flight " +
                         "WHERE flight.name = :name"
-        )
+        ),
 })
 
 public class Flight {

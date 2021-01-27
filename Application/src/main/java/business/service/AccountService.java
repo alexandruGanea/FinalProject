@@ -8,10 +8,9 @@ import persistence.HibernateUtil;
 import persistence.dao.AccountDAO;
 import persistence.entities.Account;
 
-import java.nio.charset.StandardCharsets;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 @Service
 public class AccountService {
@@ -33,22 +32,33 @@ public class AccountService {
         Account account = new Account();
         account.setAccountName(accountDTO.getAccountName());
         account.setAccountPassword(encryptPassword(accountDTO.getAccountPassword()));
+        account.setUserLogin(false);
+        account.setAdminLogin(false);
         accountDAO.insertAccount(session, account);
         return account;
     }
 
-    private String encryptPassword(String password) {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
+    public String encryptPassword(String password) {
         MessageDigest messageDigest = null;
         try {
             messageDigest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e.getMessage());
         }
-        byte[] hashedPassword = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
-        return hashedPassword.toString();
+        BigInteger bigInteger = new BigInteger(1, messageDigest.digest(password.getBytes()));
+        return bigInteger.toString();
+    }
+
+    public void accountLogin(AccountDTO accountDTO){
+        accountDAO.updateUserLogin(accountDTO.getAccountName(), encryptPassword(accountDTO.getAccountPassword()), true);
+    }
+
+    public void accountLogout(AccountDTO accountDTO) {
+        accountDAO.updateUserLogin(accountDTO.getAccountName(), encryptPassword(accountDTO.getAccountPassword()), false);
+    }
+
+    public boolean isLoggedIn(AccountDTO accountDTO){
+        return accountDAO.isLoggedIn(accountDTO.getAccountName(), encryptPassword(accountDTO.getAccountPassword()));
     }
 
     public boolean isInserted(AccountDTO accountDTO) {
@@ -60,6 +70,8 @@ public class AccountService {
     public boolean isInserted(Session session, AccountDTO accountDTO) {
         String password = encryptPassword(accountDTO.getAccountPassword());
         Integer foundId = accountDAO.findAccountIdByNameAndPassword(session, accountDTO.getAccountName(), password);
+        System.out.println("AccountId: " + foundId);
         return foundId != 0;
     }
+
 }

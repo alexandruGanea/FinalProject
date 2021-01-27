@@ -89,6 +89,7 @@ public class RoomDAO {
     }
 
     public Integer findRoomIdByTypeAndHotelId(Session session, String roomType, int id) {
+        session.beginTransaction();
         Query selectRoomIdByTypeAndHotel = session.createNamedQuery("selectRoomIdByTypeAndHotelId");
         selectRoomIdByTypeAndHotel.setParameter("roomType", roomType);
         selectRoomIdByTypeAndHotel.setParameter("id", id);
@@ -110,6 +111,21 @@ public class RoomDAO {
         Room room = null;
         try {
             room = (Room) selectRoomByTypeAndHotel.getSingleResult();
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+        }
+        session.getTransaction().commit();
+        return room;
+    }
+
+    public Room findRoomByTravelPackageName(Session session, String name, int maxGuests) {
+        session.beginTransaction();
+        Query selectRoomByTravelPackageName = session.createNamedQuery("selectRoomByTypeAndHotel");
+        selectRoomByTravelPackageName.setParameter("name", name);
+        selectRoomByTravelPackageName.setParameter("maxGuests", maxGuests);
+        Room room = null;
+        try {
+            room = (Room) selectRoomByTravelPackageName.getSingleResult();
         } catch (NoResultException e) {
             System.out.println(e.getMessage());
         }
