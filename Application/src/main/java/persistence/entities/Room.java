@@ -40,12 +40,10 @@ import javax.persistence.*;
                         "AND hotel.id = :id"
         ),
         @NamedQuery(
-                name = "selectRoomByTravelPackageName",
-                query = "SELECT room from Room room " +
-                        "JOIN room.hotelContainingRoom hotelWithRoom " +
-                        "JOIN hotelWithRoom.hotel hotelInTravelPackage " +
-                        "WHERE hotelInTravelPackage.name = :name " +
-                        "AND room.maxGuests = :maxGuests"
+                name = "updateRoomAvailabilityById",
+                query = "UPDATE Room room " +
+                        "SET room.availableRooms = room.availableRooms-1 " +
+                        "WHERE room.id = :roomId"
         )
 })
 
@@ -70,11 +68,11 @@ public class Room {
     public Room() {
     }
 
-    public Room(String roomType){
+    public Room(String roomType) {
         this.roomType = roomType;
     }
 
-    public Room(String roomType, int maxGuests){
+    public Room(String roomType, int maxGuests) {
         this.roomType = roomType;
         this.maxGuests = maxGuests;
     }

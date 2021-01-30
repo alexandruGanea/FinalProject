@@ -24,6 +24,18 @@ import java.util.Set;
                 query = "UPDATE TravelPackage travelPackage " +
                         "SET travelPackage.availablePackages = travelPackage.availablePackages - :soldItems " +
                         "WHERE travelPackage.name = :name"
+        ),
+        @NamedQuery(
+                name = "selectTravelPackagesByAirportOfDeparture",
+                query = "SELECT travelPackage FROM TravelPackage travelPackage " +
+                        "JOIN travelPackage.inboundFlight iFlight " +
+                        "WHERE iFlight.name = :airportName"
+        ),
+        @NamedQuery(
+                name = "selectTravelPackagesByHotel",
+                query = "SELECT travelPackage FROM TravelPackage travelPackage " +
+                        "JOIN travelPackage.hotel hotelWithTravelPackage " +
+                        "WHERE hotelWithTravelPackage.hotelName = :hotelName"
         )
 })
 

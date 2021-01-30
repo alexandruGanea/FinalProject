@@ -110,5 +110,15 @@ public class FlightDAO {
         return foundFlights;
     }
 
+    public void updateFlightSeatsByName(Session session, String flightName, int seatsSold) {
+        session.beginTransaction();
+        Query updateFlightSeatsByName = session.createNamedQuery("updateFlightSeatsByName");
+        updateFlightSeatsByName.setParameter("seatsSold", seatsSold);
+        updateFlightSeatsByName.setParameter("flightName", flightName);
+        int rowsAffected = updateFlightSeatsByName.executeUpdate();
+        System.out.println("Rows affected: " + rowsAffected);
+        session.getTransaction().commit();
+    }
+
 
 }

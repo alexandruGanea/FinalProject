@@ -15,7 +15,9 @@ import persistence.entities.TravelPackage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -48,7 +50,6 @@ public class TravelPackageService {
         travelPackage.setHotel(checkForHotel(session, travelPackageDTO));
         travelPackage.setPackageType(travelPackageDTO.getPackageType());
         checkForMeal(session, travelPackageDTO);
-        checkForRoom(session, travelPackageDTO);
         travelPackage.setAdultPrice(calculateAdultPrice(travelPackageDTO));
         travelPackage.setChildPrice(calculateChildPrice(travelPackageDTO));
         travelPackage.setPromoted(travelPackageDTO.isPromoted());
@@ -141,12 +142,11 @@ public class TravelPackageService {
 
     private double calculateChildPrice(TravelPackageDTO travelPackageDTO) {
         long noOfDays = getTravelDays(travelPackageDTO);
-        return getFlightPrice(travelPackageDTO) + ((getDailyRoomPrice(travelPackageDTO) + getDailyMealPrice(travelPackageDTO)) * noOfDays / 2);
+        return (getFlightPrice(travelPackageDTO) + (getDailyMealPrice(travelPackageDTO) * noOfDays) / 2);
     }
 
-    void updateStock(Session session, TravelPackageDTO travelPackageDTO, int soldItems) {
+    void updateStocks(Session session, TravelPackageDTO travelPackageDTO, int soldItems) {
         travelPackageDAO.updateTravelPackageStockByName(session, travelPackageDTO.getName(), soldItems);
-        roomService.updateStock(session, travelPackageDTO.getName(), soldItems);
 
     }
 
@@ -156,32 +156,67 @@ public class TravelPackageService {
     }
 
     public boolean isInserted(Session session, TravelPackageDTO travelPackageDTO) {
-        Integer idFound = travelPackageDAO.findTravelPackageIdByName(session, travelPackageDTO.getName());
+        Integer idFound = travelPackageDAO.findTravelPackageIdByName(session, travelPackageDTO.getName()).get(0);
         return idFound != 0;
     }
 
-    public TravelPackageDTO findTravelPackageByName(String name) {
-        TravelPackage foundTravelPackage = travelPackageDAO.findTravelPackageByName(name);
-        return setTravelPackageDTO(foundTravelPackage);
+    public TravelPackageDTO findTravelPackage(Session session, String name) {
+        TravelPackage foundTravelPackage = travelPackageDAO.findTravelPackageByName(session, name);
+        return setupTravelPackageDTO(session, foundTravelPackage);
     }
 
-    private TravelPackageDTO setTravelPackageDTO(TravelPackage travelPackage) {
-        if (travelPackage != null) {
-            TravelPackageDTO travelPackageDTO = new TravelPackageDTO();
-            travelPackageDTO.setName(travelPackage.getName());
-            travelPackageDTO.setDescription(travelPackage.getDescription());
-            travelPackageDTO.setInboundFlightDTO(flightService.setFlightDTO(travelPackage.getInboundFlight()));
-            travelPackageDTO.setOutboundFlightDTO(flightService.setFlightDTO(travelPackage.getOutboundFlight()));
-            travelPackageDTO.setHotelDTO(hotelService.setHotelDTO(travelPackage.getHotel()));
-            travelPackageDTO.setMealDTO(mealService.setMealDTO(mealDAO.findMealByHotelId(travelPackage.getHotel().getId())));
-            travelPackageDTO.setPackageType(travelPackage.getPackageType());
-            travelPackageDTO.setAdultPrice(travelPackage.getAdultPrice());
-            travelPackageDTO.setChildPrice(travelPackage.getChildPrice());
-            travelPackageDTO.setPromoted(travelPackage.isPromoted());
-            travelPackageDTO.setAvailablePackages(travelPackage.getAvailablePackages());
-            return travelPackageDTO;
-        } else {
-            return null;
+    public TravelPackageDTO findTravelPackage(String name) {
+        TravelPackage foundTravelPackage = travelPackageDAO.findTravelPackageByName(name);
+        return setupTravelPackageDTO(foundTravelPackage);
+    }
+
+    public List<TravelPackageDTO> findTravelPackageByAirport(String airportName) {
+        List<TravelPackageDTO> foundTravelPackagesList = new ArrayList<>();
+        for (TravelPackage travelPackage : travelPackageDAO.findTravelPackagesByAirportOfDeparture(airportName)) {
+            foundTravelPackagesList.add(setupTravelPackageDTO(travelPackage));
         }
+        return foundTravelPackagesList;
+
+    }
+
+    public List<TravelPackageDTO> findTravelPackageByHotel(String hotelName) {
+        List<TravelPackageDTO> foundTravelPackagesList = new ArrayList<>();
+        for (TravelPackage travelPackage : travelPackageDAO.findTravelPackagesByHotel(hotelName)) {
+            foundTravelPackagesList.add(setupTravelPackageDTO(travelPackage));
+        }
+        return foundTravelPackagesList;
+    }
+
+
+        TravelPackageDTO setupTravelPackageDTO(TravelPackage travelPackage) {
+        TravelPackageDTO travelPackageDTO = new TravelPackageDTO();
+        travelPackageDTO.setName(travelPackage.getName());
+        travelPackageDTO.setDescription(travelPackage.getDescription());
+        travelPackageDTO.setInboundFlightDTO(flightService.setFlightDTO(travelPackage.getInboundFlight()));
+        travelPackageDTO.setOutboundFlightDTO(flightService.setFlightDTO(travelPackage.getOutboundFlight()));
+        travelPackageDTO.setHotelDTO(hotelService.setHotelDTO(travelPackage.getHotel()));
+        travelPackageDTO.setMealDTO(mealService.setMealDTO(mealDAO.findMealByHotelId(travelPackage.getHotel().getId())));
+        travelPackageDTO.setPackageType(travelPackage.getPackageType());
+        travelPackageDTO.setAdultPrice(travelPackage.getAdultPrice());
+        travelPackageDTO.setChildPrice(travelPackage.getChildPrice());
+        travelPackageDTO.setPromoted(travelPackage.isPromoted());
+        travelPackageDTO.setAvailablePackages(travelPackage.getAvailablePackages());
+        return travelPackageDTO;
+    }
+
+    TravelPackageDTO setupTravelPackageDTO(Session session, TravelPackage travelPackage) {
+        TravelPackageDTO travelPackageDTO = new TravelPackageDTO();
+        travelPackageDTO.setName(travelPackage.getName());
+        travelPackageDTO.setDescription(travelPackage.getDescription());
+        travelPackageDTO.setInboundFlightDTO(flightService.setFlightDTO(travelPackage.getInboundFlight()));
+        travelPackageDTO.setOutboundFlightDTO(flightService.setFlightDTO(travelPackage.getOutboundFlight()));
+        travelPackageDTO.setHotelDTO(hotelService.setHotelDTO(travelPackage.getHotel()));
+        travelPackageDTO.setMealDTO(mealService.setMealDTO(mealDAO.findMealByHotelId(session, travelPackage.getHotel().getId())));
+        travelPackageDTO.setPackageType(travelPackage.getPackageType());
+        travelPackageDTO.setAdultPrice(travelPackage.getAdultPrice());
+        travelPackageDTO.setChildPrice(travelPackage.getChildPrice());
+        travelPackageDTO.setPromoted(travelPackage.isPromoted());
+        travelPackageDTO.setAvailablePackages(travelPackage.getAvailablePackages());
+        return travelPackageDTO;
     }
 }

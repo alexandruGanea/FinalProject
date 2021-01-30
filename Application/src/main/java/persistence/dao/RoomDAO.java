@@ -55,7 +55,7 @@ public class RoomDAO {
         return room;
     }
 
-    public Room findRoomByTypeAndHotelId(Session session , String roomType, int id) {
+    public Room findRoomByTypeAndHotelId(Session session, String roomType, int id) {
         session.beginTransaction();
         Query selectRoomByTypeAndHotel = session.createNamedQuery("selectRoomByTypeAndHotelId");
         selectRoomByTypeAndHotel.setParameter("roomType", roomType);
@@ -69,6 +69,26 @@ public class RoomDAO {
         session.getTransaction().commit();
         session.close();
         return room;
+    }
+
+    public void updateRoomAvailabilityById(Session session, int roomId) {
+        session.beginTransaction();
+        Query updateRoomAvailabilityById = session.createNamedQuery("updateRoomAvailabilityById");
+        updateRoomAvailabilityById.setParameter("roomId", roomId);
+        int rowsAffected = updateRoomAvailabilityById.executeUpdate();
+        System.out.println("Rows affected: " + rowsAffected);
+        session.getTransaction().commit();
+    }
+
+    public void updateRoomAvailabilityById(int roomId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        Query updateRoomAvailabilityById = session.createNamedQuery("updateRoomAvailabilityById");
+        updateRoomAvailabilityById.setParameter("roomId", roomId);
+        int rowsAffected = updateRoomAvailabilityById.executeUpdate();
+        System.out.println("Rows affected: " + rowsAffected);
+        session.getTransaction().commit();
+        session.close();
     }
 
     public Integer findRoomIdByTypeAndHotelId(String roomType, int id) {

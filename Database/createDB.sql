@@ -93,6 +93,8 @@ AI_price double
 
 create table travel_packages(
 id int not null primary key auto_increment,
+name varchar(25) not null,
+description varchar(1024) not null,
 inbound_flight_id int not null,
 constraint fk_inbound_flight
 foreign key (inbound_flight_id)
@@ -115,7 +117,7 @@ available_packages int not null
 create table accounts(
 id int not null primary key unique auto_increment,
 account_name varchar(30) not null unique,
-account_password varchar(30) not null,
+account_password varchar(50) not null,
 is_admin_login tinyint,
 is_user_login tinyint
 );

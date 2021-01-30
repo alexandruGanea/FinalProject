@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 public class RoomDTO {
 
 
+    private int roomId;
     @NotNull
     @NotEmpty
     @NotBlank
@@ -67,6 +68,13 @@ public class RoomDTO {
         this.hotelDTO = hotelDTO;
     }
 
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
 
     @Override
     public String toString() {

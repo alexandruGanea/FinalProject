@@ -1,7 +1,4 @@
 package persistence.entities;
-
-import net.bytebuddy.asm.Advice;
-
 import javax.persistence.*;
 import java.util.Set;
 

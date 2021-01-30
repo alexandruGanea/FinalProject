@@ -1,7 +1,7 @@
 package business.service;
 
+import business.dto.HotelDTO;
 import business.dto.RoomDTO;
-import business.dto.TravelPackageDTO;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import persistence.dao.RoomDAO;
 import persistence.entities.Hotel;
 import persistence.entities.Room;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -67,16 +67,24 @@ public class RoomService {
         return idFound != 0;
     }
 
-    void updateStock(Session session, RoomDTO roomDTO, int soldItems){
-
+    public RoomDTO findRoomByTypeAndHotelId(Session session, String roomType, HotelDTO hotelDTO) {
+        Hotel foundHotel = hotelDAO.findHotelByNameAndCity(hotelDTO.getName(), hotelDTO.getCityDTO().getName());
+        Room foundRoom = roomDAO.findRoomByTypeAndHotelId(session, roomType, foundHotel.getId());
+        return setRoomDTO(foundRoom);
     }
 
-    private RoomDTO setRoomDTO(Room room) {
+    void updateStocks(Session session, RoomDTO roomDTO) {
+        roomDAO.updateRoomAvailabilityById(session, roomDTO.getRoomId());
+    }
+
+
+    RoomDTO setRoomDTO(Room room) {
         RoomDTO roomDTO = new RoomDTO();
         roomDTO.setRoomType(room.getRoomType());
         roomDTO.setAvailableRooms(room.getAvailableRooms());
         roomDTO.setGuestPrice(room.getGuestPrice());
         roomDTO.setMaxGuests(room.getMaxGuests());
+        roomDTO.setRoomId(room.getId());
         return roomDTO;
     }
 

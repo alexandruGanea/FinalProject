@@ -24,6 +24,12 @@ import javax.persistence.*;
                         "FROM Flight flight " +
                         "WHERE flight.name = :name"
         ),
+        @NamedQuery(
+                name = "updateFlightSeatsByName",
+                query = "UPDATE Flight flight " +
+                        "SET flight.availableSeats = (flight.availableSeats - :seatsSold) " +
+                        "WHERE flight.name = :flightName"
+        )
 })
 
 public class Flight {

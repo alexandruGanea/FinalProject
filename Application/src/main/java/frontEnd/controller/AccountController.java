@@ -32,7 +32,7 @@ public class AccountController {
             insertAccount(accountDTO);
             return loginAccount(accountDTO);
         } else if(accountService.isLoggedIn(accountDTO)) {
-           return ResponseEntity.status(HttpStatus.CONFLICT).body("You are already logged in on another device. Please log out there first");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("You are already logged in on another device. Please log out there first");
         }else{
             accountService.accountLogin(accountDTO);
             return ResponseEntity.status(HttpStatus.OK).body("You have successfully logged in.");

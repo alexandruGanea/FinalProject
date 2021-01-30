@@ -1,6 +1,7 @@
 package business.service;
 
 import business.dto.HotelDTO;
+import business.dto.RoomDTO;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,10 @@ import persistence.dao.CityDAO;
 import persistence.dao.HotelDAO;
 import persistence.entities.City;
 import persistence.entities.Hotel;
+import persistence.entities.Room;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class HotelService {
@@ -19,8 +24,6 @@ public class HotelService {
     CityDAO cityDAO;
     @Autowired
     CityService cityService;
-    @Autowired
-    MealService mealService;
     @Autowired
     RoomService roomService;
 
@@ -61,12 +64,25 @@ public class HotelService {
         return idFound != 0;
     }
 
+    public void checkRoomAvailability(HotelDTO hotelDTO){
+        for(RoomDTO roomDTO: hotelDTO.getRoomDTOSet()){
+            if (roomDTO.getAvailableRooms()<1){
+
+            }
+        }
+    }
+
     HotelDTO setHotelDTO(Hotel hotel) {
         HotelDTO hotelDTO = new HotelDTO();
         hotelDTO.setName(hotel.getHotelName());
         hotelDTO.setDescription(hotel.getDescription());
         hotelDTO.setRating(hotel.getHotelRating());
         hotelDTO.setCityDTO(cityService.setCityDTO(hotel.getCityContainingHotel()));
+        Set<RoomDTO> roomDTOinHotelDTO = new HashSet<>();
+       for(Room room: hotel.getRoomsInHotel()){
+           roomDTOinHotelDTO.add(roomService.setRoomDTO(room));
+       }
         return hotelDTO;
     }
+
 }

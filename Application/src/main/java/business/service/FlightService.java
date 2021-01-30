@@ -84,5 +84,9 @@ public class FlightService {
         flightDTO.setSeatPrice(flight.getSeatPrice());
         return flightDTO;
     }
+
+    public void updateStocks(Session session, FlightDTO flightDTO, int seatsSold) {
+        flightDAO.updateFlightSeatsByName(session, flightDTO.getName(), seatsSold);
+    }
 }
 
